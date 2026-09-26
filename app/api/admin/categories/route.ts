@@ -1,7 +1,7 @@
 // app/api/admin/categories/route.ts
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/src/generated/prisma/client";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { isAdminRequest } from "@/lib/admin";

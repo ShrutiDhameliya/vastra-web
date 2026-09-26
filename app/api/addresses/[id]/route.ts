@@ -54,7 +54,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   // Deleting the default promotes the oldest remaining address
   let newDefaultId: string | null = null;
   if (existing.isDefault) {
-    const next = await prisma.address.findFirst({ where: { userId }, orderBy: { createdAt: "asc" } });
+    const next = await prisma.address.findFirst({ where: { userId }, orderBy: { id: "asc" } });
     if (next) {
       await prisma.address.update({ where: { id: next.id }, data: { isDefault: true } });
       newDefaultId = next.id;

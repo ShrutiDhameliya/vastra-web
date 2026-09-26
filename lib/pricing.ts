@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/src/generated/prisma/client";
 import { formatPaise } from "./money";
 
 export const FREE_SHIPPING_THRESHOLD = 199_900; // ₹1,999
@@ -90,7 +90,13 @@ export async function validateCoupon(
   if (subtotal < coupon.minOrderAmount)
     return { ok: false, code, reason: `Minimum order of ${formatPaise(coupon.minOrderAmount)} required` };
 
-  const where = { couponCode: coupon.code, status: { not: "CANCELLED" } };
+  const where: Prisma.OrderWhereInput = {
+    couponCode: coupon.code,
+    status: {
+      not: "CANCELLED",
+    },
+  };
+
   const [totalUsed, usedByEmail] = await Promise.all([
     db.order.count({ where }),
     db.order.count({ where: { ...where, email } }),

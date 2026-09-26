@@ -1,7 +1,8 @@
 "use client";
 
 import { create } from "zustand";
-import { markTourDismissed, type TourId } from "./tour-storage";
+import { markTourDismissed } from "./tour-storage";
+import type { TourId } from "./tour-steps";
 
 type TourState = {
     activeTour: TourId | null;

@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import type { OrderStatus } from "@prisma/client";
 import { STATUS_LABEL } from "@/lib/order-status";
+import type { OrderStatus } from "@/src/generated/prisma/enums";
 
 export function StatusUpdater({ orderNumber, next }: {
     orderNumber: string;
@@ -46,8 +46,8 @@ export function StatusUpdater({ orderNumber, next }: {
                     <button
                         key={s} onClick={() => moveTo(s)} disabled={busy !== null}
                         className={`rounded-full px-4 py-2 text-sm font-medium transition disabled:opacity-40 ${s === "CANCELLED" || s === "REFUNDED"
-                                ? "border border-sale text-sale hover:bg-sale hover:text-white"
-                                : "bg-ink text-paper hover:bg-stone-800"
+                            ? "border border-sale text-sale hover:bg-sale hover:text-white"
+                            : "bg-ink text-paper hover:bg-stone-800"
                             }`}>
                         {busy === s ? "…" : `Mark ${STATUS_LABEL[s]}`}
                     </button>

@@ -1,4 +1,4 @@
-import type { OrderStatus } from "@prisma/client";
+import { OrderStatus } from "@prisma/client";
 
 export const ORDER_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   PENDING: ["CONFIRMED", "CANCELLED"],
@@ -29,3 +29,7 @@ export const STATUS_BADGE: Record<OrderStatus, string> = {
   CANCELLED: "bg-red-100 text-red-700",
   REFUNDED: "bg-red-100 text-red-700",
 };
+
+export function nextStatuses(status: OrderStatus): OrderStatus[] {
+  return ORDER_TRANSITIONS[status];
+}

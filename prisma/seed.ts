@@ -1,6 +1,7 @@
 
+import { randomUUID } from "node:crypto";
 import "dotenv/config";
-import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaClient } from "@/src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const adapter = new PrismaPg({
@@ -52,6 +53,21 @@ async function main() {
   await prisma.productVariant.deleteMany();
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
+
+  await prisma.user.deleteMany({
+    where: {
+      id: {
+        in: [
+          "seed-user-aisha",
+          "seed-user-rohan",
+          "seed-user-meera",
+          "seed-user-kabir",
+          "seed-user-zoya",
+          "seed-user-aditya",
+        ],
+      },
+    },
+  });
 
   // --------------------------------------------------
   // 2. Create categories
@@ -316,38 +332,37 @@ async function main() {
   // 5. Create demo users
   // --------------------------------------------------
 
-const users = await Promise.all(
-  [
-    {
-      name: "Aisha Sharma",
-      email: "aisha@example.com",
-    },
-    {
-      name: "Rohan Mehta",
-      email: "rohan@example.com",
-    },
-    {
-      name: "Meera Iyer",
-      email: "meera@example.com",
-    },
-    {
-      name: "Kabir Singh",
-      email: "kabir@example.com",
-    },
-    {
-      name: "Zoya Khan",
-      email: "zoya@example.com",
-    },
-    {
-      name: "Aditya Rao",
-      email: "aditya@example.com",
-    },
-  ].map((u) =>
-    prisma.user.create({
-      data: u,
-    })
-  )
-);
+  const users = await Promise.all(
+    [
+      {
+        name: "Aisha Sharma",
+        email: "aisha@example.com",
+      },
+      {
+        name: "Rohan Mehta",
+        email: "rohan@example.com",
+      },
+      {
+        name: "Meera Iyer",
+        email: "meera@example.com",
+      },
+      {
+        name: "Kabir Singh",
+        email: "kabir@example.com",
+      },
+      {
+        name: "Zoya Khan",
+        email: "zoya@example.com",
+      },
+      {
+        name: "Aditya Rao",
+        email: "aditya@example.com",
+      },
+    ].map((u) =>
+      prisma.user.create({ data: { id: randomUUID(), ...u } })
+    )
+  );
+
   // --------------------------------------------------
   // 6. Reviews
   //

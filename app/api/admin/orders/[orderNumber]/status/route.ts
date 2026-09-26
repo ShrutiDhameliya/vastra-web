@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { OrderStatus } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { isAdminRequest } from "@/lib/admin";
 import { ORDER_TRANSITIONS } from "@/lib/order-status";
+import { OrderStatus } from "@/src/generated/prisma/enums";
 
 const schema = z.object({ status: z.nativeEnum(OrderStatus) });
 

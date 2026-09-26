@@ -10,7 +10,7 @@ export default async function AddressesPage() {
   if (!user) return null;
   const addresses = await prisma.address.findMany({
     where: { userId: user.id },
-    orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }],
+    orderBy: [{ isDefault: "desc" }, { id: "asc" }],
   });
   return <AddressManager initial={addresses} />;
 }

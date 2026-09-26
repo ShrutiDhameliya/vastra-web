@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/src/generated/prisma/client";
 import { prisma } from "./db";
 import type { CardProduct, DetailProduct, ParsedShopQuery, ShopFacets, ShopSort } from "@/types";
 import { sortSizes } from "./sizes";
@@ -125,7 +125,7 @@ export function parseShopQuery(sp: Record<string, string>): ParsedShopQuery {
 /** Multi-word search: every term must match SOME field (AND of ORs). "black shoes" →
  *  a product matching "black" in color-ish text and "shoes" in name/category — not
  *  the literal string "black shoes". Good enough until tsvector/full-text later. */
-function searchClause(q: string | null) {
+function searchClause(q: string | null): Prisma.ProductWhereInput[] | undefined {
   const terms = (q ?? "").split(/\s+/).filter(Boolean);
   if (terms.length === 0) return undefined;
   return terms.map((t) => ({

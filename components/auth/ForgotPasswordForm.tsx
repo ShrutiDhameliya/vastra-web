@@ -12,7 +12,8 @@ export function ForgotPasswordForm() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    await authClient.forgetPassword({ email, redirectTo: "/reset-password" });
+    // await authClient.forgetPassword({ email, redirectTo: "/reset-password" });
+    await authClient.requestPasswordReset({ email, redirectTo: "/reset-password" });
     setSent(true);
     setBusy(false);
   }

@@ -1,10 +1,10 @@
 // app/api/admin/categories/[id]/route.ts
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { isAdminRequest } from "@/lib/admin";
+import { Prisma } from "@/src/generated/prisma/client";
 
 const schema = z.object({
   name: z.string().trim().min(2).max(60),

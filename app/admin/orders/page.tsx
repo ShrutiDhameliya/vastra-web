@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { OrderStatus } from "@prisma/client";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/db";
 import { formatPaise } from "@/lib/money";
 import { STATUS_BADGE, STATUS_LABEL } from "@/lib/order-status";
+import type { OrderStatus } from "@/src/generated/prisma/enums";
 
 export const metadata = { title: "Orders" };
 

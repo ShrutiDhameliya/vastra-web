@@ -30,7 +30,7 @@ export function ResetPasswordForm() {
     if (password.length < 8) return setError("Password must be at least 8 characters");
     if (password !== confirm) return setError("Passwords don't match");
     setBusy(true);
-    const { error } = await authClient.resetPassword({ newPassword: password, token });
+    const { error } = await authClient.resetPassword({ newPassword: password, token: token ?? undefined });
     if (error) {
       setError(error.message ?? "Couldn't reset your password");
       setBusy(false);
