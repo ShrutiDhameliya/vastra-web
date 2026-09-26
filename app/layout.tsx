@@ -39,9 +39,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main id="main" className="min-h-[60vh]">{children}</main>
         <Footer />
+        <WishlistSync />
         <TourRoot />
         <TourPrompt />
-        <WishlistSync />
       </body>
     </html>
   );

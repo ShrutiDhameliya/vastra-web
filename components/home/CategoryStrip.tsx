@@ -6,7 +6,7 @@ type CategoryLink = { name: string; slug: string; imageUrl: string | null };
 export function CategoryStrip({ categories }: { categories: CategoryLink[] }) {
   if (categories.length === 0) return null;
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <section data-tour="categories" className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
       <h2 className="font-display text-2xl font-semibold sm:text-3xl">Shop by Category</h2>
       <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4 sm:gap-5">
         {categories.map((c) => (

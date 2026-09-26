@@ -7,7 +7,7 @@ export function Newsletter() {
   const [done, setDone] = useState(false);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
+    <section data-tour="newsletter" className="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
       <div className="rounded-xl border border-stone-200 bg-white px-6 py-10 text-center sm:px-10">
         <h2 className="font-display text-2xl font-semibold">Stay in the loop</h2>
         <p className="mt-2 text-sm text-stone-600">

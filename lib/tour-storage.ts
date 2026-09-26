@@ -15,7 +15,7 @@ export function markTourDismissed(tour: TourId, completed = false): void {
 
 export function isTourDismissed(tour: TourId): boolean {
     try {
-        return localStorage.getItem(key(tour)) !== null;
+        return localStorage.getItem(key(tour)) !== null
     } catch {
         return true; // can't persist → never nag
     }

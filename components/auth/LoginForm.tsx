@@ -37,7 +37,7 @@ export function LoginForm() {
       subtitle="Sign in to track orders and check out faster."
       footer={<>New to Vastra? <Link href="/register" className="font-medium text-ink underline-offset-2 hover:underline">Create an account</Link></>}
     >
-      <form onSubmit={submit} className="space-y-4">
+      <form data-tour="auth-form" onSubmit={submit} className="space-y-4">
         <Field label="Email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <Field label="Password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
         {error && <p className="text-sm text-sale" role="alert">{error}</p>}

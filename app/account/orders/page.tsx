@@ -32,7 +32,7 @@ export default async function OrdersPage() {
 
     if (orders.length === 0) {
         return (
-            <div className="flex flex-col items-center py-16 text-center">
+            <div data-tour="orders-page" className="flex flex-col items-center py-16 text-center">
                 <ShoppingBag className="size-10 text-stone-400" />
                 <h1 className="mt-4 font-display text-2xl font-semibold">No orders yet</h1>
                 <p className="mt-2 text-sm text-stone-500">When you place an order, it&apos;ll show up here.</p>
@@ -44,7 +44,7 @@ export default async function OrdersPage() {
     }
 
     return (
-        <div>
+        <div data-tour="orders-page">
             <h1 className="font-display text-3xl font-semibold">My Orders</h1>
             <ul className="mt-6 space-y-4">
                 {orders.map((o) => (

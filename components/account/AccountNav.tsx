@@ -23,7 +23,7 @@ export function AccountNav() {
     }
 
     return (
-        <nav className="mt-6 flex gap-1 overflow-x-auto lg:flex-col" aria-label="Account">
+        <nav data-tour="account-nav" className="mt-6 flex gap-1 overflow-x-auto lg:flex-col" aria-label="Account">
             {LINKS.map((l) => {
                 const active = l.exact ? pathname === l.href : pathname.startsWith(l.href);
                 return (

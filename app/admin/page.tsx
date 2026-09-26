@@ -92,14 +92,14 @@ export default async function AdminDashboard() {
         <div>
             <h1 className="font-display text-3xl font-semibold">Dashboard</h1>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div data-tour="admin-stats" className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 <Stat label="Total Revenue" value={formatPaise(revenue._sum.total ?? 0)} sub="Online paid + delivered COD" />
                 <Stat label="Orders" value={String(orderCount)} sub={pendingCount ? `${pendingCount} pending` : "none pending"} />
                 <Stat label="Customers" value={String(customerCount)} />
                 <Stat label="Products" value={String(productCount)} sub="live (unarchived)" />
             </div>
 
-            <section className="mt-6 rounded-xl border border-stone-200 bg-white p-6">
+            <section data-tour="admin-chart" className="mt-6 rounded-xl border border-stone-200 bg-white p-6">
                 <h2 className="font-display text-lg font-semibold">Sales — last 30 days</h2>
                 <p className="text-xs text-stone-500">Gross, excluding cancelled · hover a bar for the day&apos;s total</p>
                 <SalesChart days={days} />

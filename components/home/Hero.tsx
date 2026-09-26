@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function Hero() {
   return (
-    <section className="mx-auto grid max-w-7xl items-center gap-10 px-4 pb-16 pt-12 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:pt-20">
+    <section data-tour="hero" className="mx-auto grid max-w-7xl items-center gap-10 px-4 pb-16 pt-12 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:pt-20">
       <div className="max-w-xl">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
           New Collection · Autumn 2025

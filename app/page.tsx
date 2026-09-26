@@ -22,6 +22,7 @@ export default async function HomePage() {
         title="Featured Products"
         products={featured}
         viewAllHref="/shop"
+        tourId="featured"
       />
       <PromoBanner />
       <ProductSection

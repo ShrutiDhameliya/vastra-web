@@ -86,7 +86,7 @@ export default async function AdminOrders({
                 ))}
             </div>
 
-            <div className="mt-4 overflow-x-auto rounded-xl border border-stone-200 bg-white">
+            <div data-tour="admin-orders" className="mt-4 overflow-x-auto rounded-xl border border-stone-200 bg-white">
                 <table className="w-full min-w-[720px] text-sm">
                     <thead className="border-b border-stone-200">
                         <tr>

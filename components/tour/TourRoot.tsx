@@ -8,13 +8,12 @@ import { selectCartCount, useCartStore } from "@/lib/cart-store";
 import { useTourStore } from "@/lib/tour-store";
 import { buildTourSteps, type TourContext, type TourStep } from "@/lib/tour-steps";
 
-const GAP = 12;          // tooltip distance from the target
-const MARGIN = 12;        // viewport edge clamp
-const PAD = 6;            // spotlight padding around the target
-const SEEK_TIMEOUT_MS = 5000; // missing-target grace before skipping the step
+const GAP = 12;
+const MARGIN = 12;
+const PAD = 6;
+const SEEK_TIMEOUT_MS = 5000;
+const MAX_CONSECUTIVE_MISSES = 3;
 
-// useLayoutEffect during SSR logs a warning; this component renders null on
-// the server, so gate it — position must land before first paint.
 const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export function TourRoot() {
@@ -31,7 +30,7 @@ export function TourRoot() {
     const cartCount = useCartStore(selectCartCount);
     const [isMobile, setIsMobile] = useState(false);
 
-    const [plan, setPlan] = useState<TourStep[] | null>(null); // steps filtered once, at start
+    const [plan, setPlan] = useState<TourStep[] | null>(null);
     const [target, setTarget] = useState<HTMLElement | null>(null);
     const [waiting, setWaiting] = useState(false);
     const [sessionTimedOut, setSessionTimedOut] = useState(false);
@@ -40,13 +39,16 @@ export function TourRoot() {
     const holeRef = useRef<SVGRectElement | null>(null);
     const ringRef = useRef<SVGRectElement | null>(null);
     const tipRef = useRef<HTMLDivElement | null>(null);
+    // Survives effect re-runs: 3 misses in a row = wiring broken, end the tour
+    const missStreakRef = useRef(0);
 
     const step = plan && stepIndex < plan.length ? plan[stepIndex] : null;
     const isLast = plan != null && stepIndex === plan.length - 1;
 
-    /* ── responsive: mobile = bottom-docked tooltip ── */
+    /* ── responsive: 767px matches the app's `md` breakpoint, where the
+          desktop nav/search hide and the burger appears ── */
     useEffect(() => {
-        const mq = window.matchMedia("(max-width: 639px)");
+        const mq = window.matchMedia("(max-width: 767px)");
         const update = () => setIsMobile(mq.matches);
         update();
         mq.addEventListener("change", update);
@@ -71,19 +73,18 @@ export function TourRoot() {
             setPlan(null);
             setTarget(null);
             setWaiting(false);
+            missStreakRef.current = 0;
             if (prevFocus.current?.isConnected) prevFocus.current.focus({ preventScroll: true });
             prevFocus.current = null;
         }
     }, [activeTour]);
 
-    /* ── build the plan once per tour from a context snapshot (waits for the
-          session so guest/account/admin steps filter correctly) ── */
+    /* ── build the plan once per tour from a context snapshot ── */
     useEffect(() => {
         if (!activeTour || plan) return;
         if (isPending && !sessionTimedOut) return;
         const ctx: TourContext = {
             isLoggedIn: !!session?.user,
-            // role is an additionalField — cast because authClient's inferred type is loose
             isAdmin: (session?.user as { role?: string } | undefined)?.role === "ADMIN",
             cartCount,
             isMobile,
@@ -96,23 +97,34 @@ export function TourRoot() {
         if (plan && stepIndex >= plan.length) stop(true);
     }, [plan, stepIndex, stop]);
 
-    /* ── resolve the target: navigate if needed, poll, skip if unreachable ── */
-    /* ── resolve the target: navigate if needed, poll, skip if unreachable ── */
+    /* ── resolve the target: navigate if needed, poll, skip if unreachable.
+          Three consecutive unreachable stops end the tour — that means the
+          data-tour wiring is missing, not that one element was late. ── */
     useEffect(() => {
         if (!step) return;
         let cancelled = false;
         let pollTimer = 0;
         let skipTimer = 0;
 
-        // Navigate first — for centered steps too (welcome/admin-welcome).
-        // The effect re-runs when pathname updates; the timer below only fires
-        // if navigation never lands (guarded route, redirect loop).
+        const recordMiss = (reason: string) => {
+            console.warn(`[tour] skipping step "${step.id}" — ${reason}`);
+            missStreakRef.current += 1;
+            if (missStreakRef.current >= MAX_CONSECUTIVE_MISSES) {
+                console.error(
+                    "[tour] multiple stops in a row couldn't be found — data-tour attributes look missing. Ending the tour."
+                );
+                stop();
+                return;
+            }
+            next();
+        };
+
         if (step.path && pathname !== step.path) {
             setWaiting(true);
             setTarget(null);
             router.push(step.path);
             skipTimer = window.setTimeout(() => {
-                if (!cancelled) next(); // graceful skip, never a wedged pill
+                if (!cancelled) recordMiss(`never reached ${step.path}`);
             }, SEEK_TIMEOUT_MS);
             return () => {
                 cancelled = true;
@@ -123,6 +135,7 @@ export function TourRoot() {
         if (!step.selector) {
             setTarget(null);
             setWaiting(false);
+            missStreakRef.current = 0; // centered steps always succeed
             return;
         }
 
@@ -135,6 +148,7 @@ export function TourRoot() {
             });
             setTarget(el);
             setWaiting(false);
+            missStreakRef.current = 0;
         };
 
         let found = false;
@@ -152,7 +166,7 @@ export function TourRoot() {
         seek();
 
         skipTimer = window.setTimeout(() => {
-            if (!cancelled && !found) next();
+            if (!cancelled && !found) recordMiss(`target not found: ${step.selector}`);
         }, SEEK_TIMEOUT_MS);
 
         return () => {
@@ -160,64 +174,9 @@ export function TourRoot() {
             window.clearTimeout(pollTimer);
             window.clearTimeout(skipTimer);
         };
-    }, [step, pathname, router, next]);
-    //   useEffect(() => {
-    //     if (!step) return;
-    //     let cancelled = false;
-    //     let pollTimer = 0;
+    }, [step, pathname, router, next, stop]);
 
-    //     if (!step.selector) {
-    //       setTarget(null); // centered step — nothing to find
-    //       setWaiting(false);
-    //       return;
-    //     }
-
-    //     const attach = (el: HTMLElement) => {
-    //       const r = el.getBoundingClientRect();
-    //       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    //       el.scrollIntoView({
-    //         block: r.height > window.innerHeight * 0.6 ? "nearest" : "center",
-    //         behavior: reduced ? "auto" : "smooth",
-    //       });
-    //       setTarget(el);
-    //       setWaiting(false);
-    //     };
-
-    //     if (step.path && pathname !== step.path) {
-    //       setWaiting(true);
-    //       setTarget(null);
-    //       router.push(step.path); // this effect re-runs when the pathname updates
-    //       return;
-    //     }
-
-    //     let found = false;
-    //     const seek = () => {
-    //       if (cancelled) return;
-    //       const el = document.querySelector<HTMLElement>(step.selector!);
-    //       if (el) {
-    //         found = true;
-    //         attach(el);
-    //         return;
-    //       }
-    //       setWaiting(true);
-    //       pollTimer = window.setTimeout(seek, 120);
-    //     };
-    //     seek();
-
-    //     // Requirement: a missing element must never break the tour — skip forward.
-    //     const skipTimer = window.setTimeout(() => {
-    //       if (!cancelled && !found) next();
-    //     }, SEEK_TIMEOUT_MS);
-
-    //     return () => {
-    //       cancelled = true;
-    //       window.clearTimeout(pollTimer);
-    //       window.clearTimeout(skipTimer);
-    //     };
-    //   }, [step, pathname, router, next]);
-
-    /* ── positioning loop: runs every frame while a step is showing, so scroll,
-          resize, smooth-scroll and layout shifts (images loading) all track ── */
+    /* ── positioning loop ── */
     useIsoLayoutEffect(() => {
         if (!step || waiting) return;
         let raf = 0;
@@ -242,7 +201,6 @@ export function TourRoot() {
                     }
 
                     if (isMobile) {
-                        // bottom-docked sheet — can never be clipped
                         tip.style.left = `${MARGIN}px`;
                         tip.style.right = `${MARGIN}px`;
                         tip.style.top = "auto";
@@ -268,7 +226,6 @@ export function TourRoot() {
                         tip.style.transform = "none";
                     }
                 } else {
-                    // centered step — hide the spotlight, center the tooltip
                     for (const rect of [holeRef.current, ringRef.current]) {
                         if (!rect) continue;
                         rect.setAttribute("x", "-100");
@@ -295,7 +252,7 @@ export function TourRoot() {
         tipRef.current?.querySelector<HTMLElement>("[data-autofocus]")?.focus({ preventScroll: true });
     }, [step, waiting, target]);
 
-    /* ── keyboard: Escape closes, arrows navigate, Tab stays inside the tooltip ── */
+    /* ── keyboard ── */
     const handleNext = useCallback(() => (isLast ? stop(true) : next()), [isLast, next, stop]);
     const handleBack = useCallback(() => back(), [back]);
 
@@ -329,8 +286,7 @@ export function TourRoot() {
         return () => window.removeEventListener("keydown", onKey);
     }, [step, handleNext, handleBack, stop]);
 
-    /* ── inert page chrome while touring — screen readers follow the dialog,
-          and the page can't receive stray focus ── */
+    /* ── inert page chrome while touring ── */
     useEffect(() => {
         if (!step) return;
         const chrome = [
@@ -346,8 +302,6 @@ export function TourRoot() {
 
     return (
         <>
-            {/* Overlay: blocks pointer interaction everywhere; page scroll stays
-          available (fixed overlays don't stop wheel/touch chaining). */}
             <div className="fixed inset-0 z-[90]" aria-hidden="true">
                 <svg className="h-full w-full">
                     <defs>

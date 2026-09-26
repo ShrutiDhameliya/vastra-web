@@ -77,7 +77,7 @@ export function CategoryManager({ initial }: { initial: Cat[] }) {
     const input = "w-full rounded-lg border border-stone-300 px-3.5 py-2.5 text-sm outline-none transition focus:border-ink";
 
     return (
-        <div>
+        <div data-tour="admin-categories">
             <h1 className="font-display text-3xl font-semibold">Categories</h1>
 
             <ul className="mt-6 space-y-2">

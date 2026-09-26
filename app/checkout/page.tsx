@@ -363,7 +363,9 @@ export default function CheckoutPage() {
 
                     {(quote?.problems.length ?? 0) > 0 && (
                         <div className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                            {quote!.problems.map((p) => <p key={p}>{p}</p>)}
+                            {quote!.problems.map((p, index) => (
+                                <p key={`${p}-${index}`}>{p}</p>
+                            ))}
                         </div>
                     )}
                     {error && (

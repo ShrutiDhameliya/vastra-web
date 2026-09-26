@@ -67,7 +67,7 @@ export default async function AdminProducts({
                 <button type="submit" className="shrink-0 rounded-full border border-stone-300 px-5 text-sm font-medium transition hover:border-ink">Search</button>
             </form>
 
-            <div className="mt-4 overflow-x-auto rounded-xl border border-stone-200 bg-white">
+            <div data-tour="admin-products" className="mt-4 overflow-x-auto rounded-xl border border-stone-200 bg-white">
                 <table className="w-full min-w-[680px] text-sm">
                     <thead className="border-b border-stone-200">
                         <tr>

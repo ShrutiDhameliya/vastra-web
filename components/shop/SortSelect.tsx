@@ -6,7 +6,7 @@ export function SortSelect() {
   const { searchParams, setParam } = useShopFilters();
 
   return (
-    <label className="flex items-center gap-2 text-sm">
+    <label data-tour="sort" className="flex items-center gap-2 text-sm">
       <span className="hidden text-stone-500 sm:inline">Sort</span>
       <select
         value={searchParams.get("sort") ?? "featured"}
