@@ -1,0 +1,10 @@
+# .github/workflows/stale-orders.yml
+name: Release stale orders
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" "${{ secrets.SITE_URL }}/api/cron/release-stale"
