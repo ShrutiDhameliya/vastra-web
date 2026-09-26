@@ -116,6 +116,7 @@ model Address {
   city      String
   state     String
   pincode   String
+  createdAt DateTime @default(now())
   isDefault Boolean @default(false)
 
   @@index([userId])

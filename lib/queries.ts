@@ -1,4 +1,4 @@
-import { Prisma } from "@/src/generated/prisma/client";
+import { Prisma } from "@prisma/client";
 import { prisma } from "./db";
 import type { CardProduct, DetailProduct, ParsedShopQuery, ShopFacets, ShopSort } from "@/types";
 import { sortSizes } from "./sizes";

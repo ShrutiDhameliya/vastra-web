@@ -1,4 +1,4 @@
-import { Prisma } from "@/src/generated/prisma/client";
+import { Prisma } from "@prisma/client";
 import { formatPaise } from "./money";
 
 export const FREE_SHIPPING_THRESHOLD = 199_900; // ₹1,999

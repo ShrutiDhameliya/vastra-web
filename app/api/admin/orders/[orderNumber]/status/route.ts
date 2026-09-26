@@ -4,7 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { isAdminRequest } from "@/lib/admin";
 import { ORDER_TRANSITIONS } from "@/lib/order-status";
-import { OrderStatus } from "@/src/generated/prisma/enums";
+import { OrderStatus } from "@prisma/client";
 
 const schema = z.object({ status: z.nativeEnum(OrderStatus) });
 

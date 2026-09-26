@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { Order, Payment, Prisma } from "@/src/generated/prisma/client";
+import { Order, Payment, Prisma } from "@prisma/client";
 import Razorpay from "razorpay";
 import { prisma } from "@/lib/db";
 import { computeTotals, resolveLines, validateCoupon } from "@/lib/pricing";

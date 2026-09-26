@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   // Both names: plain in dev, __Host- prefixed when cookies go secure in production
   const authed =
     req.cookies.has("better-auth.session_token") ||

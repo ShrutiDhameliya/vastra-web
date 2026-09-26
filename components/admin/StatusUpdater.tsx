@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { STATUS_LABEL } from "@/lib/order-status";
-import type { OrderStatus } from "@/src/generated/prisma/enums";
+import type { OrderStatus } from "@prisma/client";
 
 export function StatusUpdater({ orderNumber, next }: {
     orderNumber: string;
